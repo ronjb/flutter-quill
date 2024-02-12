@@ -76,6 +76,8 @@ class QuillEditorConfigurations extends Equatable {
     this.builder,
     this.magnifierConfiguration,
     this.textInputAction = TextInputAction.newline,
+    this.enableScribble = false,
+    this.onScribbleActivated,
   });
 
   final QuillSharedConfigurations sharedConfigurations;
@@ -336,6 +338,12 @@ class QuillEditorConfigurations extends Equatable {
   /// Default to [TextInputAction.newline]
   final TextInputAction textInputAction;
 
+  /// Enable Scribble? Currently Apple Pencil only, defaults to false.
+  final bool enableScribble;
+
+  /// Called when Scribble is activated.
+  final void Function()? onScribbleActivated;
+
   @override
   List<Object?> get props => [
         placeholder,
@@ -393,6 +401,8 @@ class QuillEditorConfigurations extends Equatable {
     QuillEditorBuilder? builder,
     TextMagnifierConfiguration? magnifierConfiguration,
     TextInputAction? textInputAction,
+    bool? enableScribble,
+    void Function()? onScribbleActivated,
   }) {
     return QuillEditorConfigurations(
       sharedConfigurations: sharedConfigurations ?? this.sharedConfigurations,
@@ -453,6 +463,8 @@ class QuillEditorConfigurations extends Equatable {
       magnifierConfiguration:
           magnifierConfiguration ?? this.magnifierConfiguration,
       textInputAction: textInputAction ?? this.textInputAction,
+      enableScribble: enableScribble ?? this.enableScribble,
+      onScribbleActivated: onScribbleActivated ?? this.onScribbleActivated,
     );
   }
 }

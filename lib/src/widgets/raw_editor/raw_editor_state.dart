@@ -480,6 +480,23 @@ class QuillRawEditorState extends EditorState
     }
   }
 
+  Widget _scribbleFocusable(Widget child) {
+    return ScribbleFocusable(
+      editorKey: _editorKey,
+      enabled: widget.configurations.enableScribble &&
+          !widget.configurations.readOnly,
+      renderBoxForBounds: () => context
+          .findAncestorStateOfType<QuillEditorState>()
+          ?.context
+          .findRenderObject() as RenderBox?,
+      onScribbleFocus: (offset) {
+        widget.configurations.focusNode.requestFocus();
+        widget.configurations.onScribbleActivated?.call();
+      },
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
@@ -525,12 +542,8 @@ class QuillRawEditorState extends EditorState
             link: _toolbarLayerLink,
             child: MouseRegion(
               cursor: SystemMouseCursors.text,
-              child: ScribbleFocusable(
-                focusNode: widget.configurations.focusNode,
-                editableKey: _editorKey,
-                enabled: !widget.configurations.readOnly,
-                updateSelectionRects: () {},
-                child: QuilRawEditorMultiChildRenderObject(
+              child: _scribbleFocusable(
+                QuilRawEditorMultiChildRenderObject(
                   key: _editorKey,
                   offset: offset,
                   document: doc,
@@ -561,12 +574,8 @@ class QuillRawEditorState extends EditorState
         child: Semantics(
           child: MouseRegion(
             cursor: SystemMouseCursors.text,
-            child: ScribbleFocusable(
-              focusNode: widget.configurations.focusNode,
-              editableKey: _editorKey,
-              enabled: !widget.configurations.readOnly,
-              updateSelectionRects: () {},
-              child: QuilRawEditorMultiChildRenderObject(
+            child: _scribbleFocusable(
+              QuilRawEditorMultiChildRenderObject(
                 key: _editorKey,
                 document: doc,
                 selection: controller.selection,

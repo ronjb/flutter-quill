@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import '../editor/editor.dart';
-
 class ScribbleFocusable extends StatefulWidget {
   const ScribbleFocusable({
     required this.child,
-    required this.focusNode,
-    required this.editableKey,
-    required this.updateSelectionRects,
+    required this.editorKey,
+    required this.renderBoxForBounds,
+    required this.onScribbleFocus,
     required this.enabled,
     super.key,
   });
 
   final Widget child;
-  final FocusNode focusNode;
-  final GlobalKey editableKey;
-  final VoidCallback updateSelectionRects;
+  final GlobalKey editorKey;
+  final RenderBox? Function() renderBoxForBounds;
+  final void Function(Offset offset) onScribbleFocus;
   final bool enabled;
 
   @override
@@ -56,13 +54,15 @@ class _ScribbleFocusableState extends State<ScribbleFocusable>
     super.dispose();
   }
 
-  RenderBox? get renderEditable =>
-      widget.editableKey.currentContext?.findRenderObject() as RenderBox?;
+  RenderBox? get _renderBoxForEditor =>
+      widget.editorKey.currentContext?.findRenderObject() as RenderBox?;
 
-  RenderBox? get quillEditorRenderBox {
-    final quillEditorState =
-        context.findAncestorStateOfType<QuillEditorState>();
-    return quillEditorState?.context.findRenderObject() as RenderBox?;
+  RenderBox? get _renderBoxForBounds {
+    final box = widget.renderBoxForBounds();
+    if (box == null || !mounted || !box.attached) {
+      return null;
+    }
+    return box;
   }
 
   static int _nextElementIdentifier = 1;
@@ -73,11 +73,7 @@ class _ScribbleFocusableState extends State<ScribbleFocusable>
 
   @override
   void onScribbleFocus(Offset offset) {
-    widget.focusNode.requestFocus();
-    // TODO(ron): Is this needed?
-    // renderEditable?.selectPositionAt(
-    //     from: offset, cause: SelectionChangedCause.scribble);
-    widget.updateSelectionRects();
+    widget.onScribbleFocus(offset);
   }
 
   @override
@@ -94,7 +90,8 @@ class _ScribbleFocusableState extends State<ScribbleFocusable>
     WidgetsBinding.instance
         .hitTestInView(result, intersection.center, View.of(context).viewId);
     return result.path.any((entry) =>
-        entry.target == renderEditable || entry.target == quillEditorRenderBox);
+        entry.target == _renderBoxForEditor ||
+        entry.target == _renderBoxForBounds);
   }
 
   @override
@@ -104,8 +101,7 @@ class _ScribbleFocusableState extends State<ScribbleFocusable>
       return Rect.zero;
     }
     final transform = box.getTransformTo(null);
-
-    final size = quillEditorRenderBox?.size ?? box.size;
+    final size = _renderBoxForBounds?.size ?? box.size;
     return MatrixUtils.transformRect(
         transform, Rect.fromLTWH(0, 0, size.width, size.height));
   }
