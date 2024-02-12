@@ -528,7 +528,7 @@ class QuillRawEditorState extends EditorState
               child: ScribbleFocusable(
                 focusNode: widget.configurations.focusNode,
                 editableKey: _editorKey,
-                enabled: true,
+                enabled: !widget.configurations.readOnly,
                 updateSelectionRects: () {},
                 child: QuilRawEditorMultiChildRenderObject(
                   key: _editorKey,
@@ -564,7 +564,7 @@ class QuillRawEditorState extends EditorState
             child: ScribbleFocusable(
               focusNode: widget.configurations.focusNode,
               editableKey: _editorKey,
-              enabled: true,
+              enabled: !widget.configurations.readOnly,
               updateSelectionRects: () {},
               child: QuilRawEditorMultiChildRenderObject(
                 key: _editorKey,
