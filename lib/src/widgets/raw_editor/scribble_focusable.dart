@@ -9,6 +9,7 @@ class ScribbleFocusable extends StatefulWidget {
     required this.renderBoxForBounds,
     required this.onScribbleFocus,
     required this.enabled,
+    required this.scribbleAreaInsets,
     super.key,
   });
 
@@ -17,6 +18,7 @@ class ScribbleFocusable extends StatefulWidget {
   final RenderBox? Function() renderBoxForBounds;
   final void Function(Offset offset) onScribbleFocus;
   final bool enabled;
+  final EdgeInsets? scribbleAreaInsets;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -103,7 +105,17 @@ class _ScribbleFocusableState extends State<ScribbleFocusable>
     final transform = box.getTransformTo(null);
     final size = _renderBoxForBounds?.size ?? box.size;
     return MatrixUtils.transformRect(
-        transform, Rect.fromLTWH(0, 0, size.width, size.height));
+        transform,
+        Rect.fromLTWH(
+          0 + (widget.scribbleAreaInsets?.left ?? 0),
+          0 + (widget.scribbleAreaInsets?.top ?? 0),
+          size.width -
+              (widget.scribbleAreaInsets?.left ?? 0) -
+              (widget.scribbleAreaInsets?.right ?? 0),
+          size.height -
+              (widget.scribbleAreaInsets?.top ?? 0) -
+              (widget.scribbleAreaInsets?.bottom ?? 0),
+        ));
   }
 
   @override

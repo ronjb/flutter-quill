@@ -493,6 +493,7 @@ class QuillRawEditorState extends EditorState
         widget.configurations.focusNode.requestFocus();
         widget.configurations.onScribbleActivated?.call();
       },
+      scribbleAreaInsets: widget.configurations.scribbleAreaInsets,
       child: child,
     );
   }

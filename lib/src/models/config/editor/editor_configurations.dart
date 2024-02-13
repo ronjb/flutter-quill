@@ -78,6 +78,7 @@ class QuillEditorConfigurations extends Equatable {
     this.textInputAction = TextInputAction.newline,
     this.enableScribble = false,
     this.onScribbleActivated,
+    this.scribbleAreaInsets,
   });
 
   final QuillSharedConfigurations sharedConfigurations;
@@ -344,6 +345,9 @@ class QuillEditorConfigurations extends Equatable {
   /// Called when Scribble is activated.
   final void Function()? onScribbleActivated;
 
+  /// Optional insets for the scribble area.
+  final EdgeInsets? scribbleAreaInsets;
+
   @override
   List<Object?> get props => [
         placeholder,
@@ -403,6 +407,7 @@ class QuillEditorConfigurations extends Equatable {
     TextInputAction? textInputAction,
     bool? enableScribble,
     void Function()? onScribbleActivated,
+    EdgeInsets? scribbleAreaInsets,
   }) {
     return QuillEditorConfigurations(
       sharedConfigurations: sharedConfigurations ?? this.sharedConfigurations,
@@ -465,6 +470,7 @@ class QuillEditorConfigurations extends Equatable {
       textInputAction: textInputAction ?? this.textInputAction,
       enableScribble: enableScribble ?? this.enableScribble,
       onScribbleActivated: onScribbleActivated ?? this.onScribbleActivated,
+      scribbleAreaInsets: scribbleAreaInsets ?? this.scribbleAreaInsets,
     );
   }
 }
